@@ -1,0 +1,40 @@
+# IDE
+.idea/
+.vscode/
+
+# Virtualenvs
+env/
+.venv/
+venv/
+.Python
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Django artifacts
+*.log
+*.pot
+*.mo
+*.swp
+
+# Static
+staticfiles/
+media/
+
+# DB artifacts
+db.sqlite3
+db.sqlite3-journal
+
+# Test
+.mypy_cache/
+.pytest_cache/
+
+# Git
+.git
+.gitignore
+
+# Local environment files
+.env
