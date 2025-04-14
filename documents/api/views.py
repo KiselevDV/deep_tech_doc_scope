@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from documents.models import Document
 from documents.tasks import parse_pdf_task, run_ocr_for_document
 # from documents.utils import process_pdf
 from documents.api.serializers import DocumentUploadSerializer, DocumentSerializer

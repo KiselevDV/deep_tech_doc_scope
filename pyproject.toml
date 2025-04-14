@@ -6,19 +6,19 @@ authors = [
     {name = "Dmitry",email = "kiselevdv1991@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<4.0"
 dependencies = [
-    "django>=5.2,<6.0",
-    "djangorestframework>=3.16.0,<4.0.0",
-    "psycopg2-binary>=2.9.10,<3.0.0",
-    "celery>=5.5.1,<6.0.0",
-    "redis>=5.2.1,<6.0.0",
-    "pypdf2>=3.0.1,<4.0.0",
-    "pymupdf>=1.25.5,<2.0.0",
-    "gunicorn>=23.0.0,<24.0.0",
-    "python-dotenv>=1.0.1,<2.0.0",
-    "whitenoise>=6.6.0,<7.0.0",
-    "python-dotenv>=1.1.0,<2.0.0"
+    "django (>=4.2,<5.0)",
+    "djangorestframework (>=3.16.0,<4.0.0)",
+    "psycopg2-binary (>=2.9.10,<3.0.0)",
+    "celery (>=5.5.1,<6.0.0)",
+    "redis (>=5.2.1,<6.0.0)",
+    "gunicorn (>=23.0.0,<24.0.0)",
+    "whitenoise (>=6.6.0,<7.0.0)",
+    "python-dotenv (>=1.0.1,<2.0.0)",
+    "pypdf2 (>=3.0.1,<4.0.0)",
+    "pymupdf (>=1.25.5,<2.0.0)",
+    "django-celery-beat (>=2.7.0,<3.0.0)"
 ]
 
 

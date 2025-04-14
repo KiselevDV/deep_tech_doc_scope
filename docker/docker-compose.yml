@@ -1,7 +1,7 @@
 services:
   backend:
     build:
-      context: .
+      context: ..
       dockerfile: docker/Dockerfile
     command: >
       sh -c "
@@ -9,47 +9,45 @@ services:
       python manage.py collectstatic --noinput &&
       gunicorn config.wsgi:application --bind 0.0.0.0:8000
       "
-    volumes:
-      - .:/app
+    env_file:
+      - ../.env
     ports:
       - "18000:8000"
-    env_file: .env
+    volumes:
+      - ../:/app
     depends_on:
-      postgresql:
+      postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     networks:
-      - app_network
-    restart: unless-stopped
-
-  postgresql:
-    image: postgres:17-alpine
+      - network_deep_tech_doc_scope
     restart: always
-    env_file: .env
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - ./DB/postgres/pg_data_deep_tech_doc_scope/:/var/lib/postgresql/data
+
+  postgres:
+    image: postgres:17-alpine
+    env_file:
+      - ../.env
     ports:
       - "15432:5432"
+    volumes:
+      - ../../DB/postgres/pg_data_deep_tech_doc_scope/:/var/lib/postgres/data
     networks:
-      - app_network
+      - network_deep_tech_doc_scope
+    restart: always
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-user_doc_scope} -d ${POSTGRES_DB:-db_doc_scope}" ]
       interval: 5s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7-alpine
-    restart: always
     ports:
       - "16379:6379"
     networks:
-      - app_network
+      - network_deep_tech_doc_scope
+    restart: always
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -58,22 +56,23 @@ services:
 
   celery:
     build:
-      context: .
+      context: ..
       dockerfile: docker/Dockerfile
     command: celery -A config worker -l info
+    env_file:
+      - ../.env
     volumes:
-      - .:/app
-    env_file: .env
+      - ../:/app
     depends_on:
-      postgresql:
+      postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
       backend:
         condition: service_started
     networks:
-      - app_network
-    restart: unless-stopped
+      - network_deep_tech_doc_scope
+    restart: always
     healthcheck:
       test: ["CMD", "celery", "-A", "config", "status"]
       interval: 10s
@@ -82,22 +81,23 @@ services:
 
   beat:
     build:
-      context: .
+      context: ..
       dockerfile: docker/Dockerfile
     command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    env_file:
+      - ../.env
     volumes:
-      - .:/app
-    env_file: .env
+      - ../:/app
     depends_on:
-      postgresql:
+      postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
       backend:
         condition: service_started
     networks:
-      - app_network
-    restart: unless-stopped
+      - network_deep_tech_doc_scope
+    restart: always
     healthcheck:
       test: ["CMD", "celery", "-A", "config", "status"]
       interval: 10s
@@ -108,5 +108,5 @@ volumes:
   pg_data_deep_tech_doc_scope:
 
 networks:
-  app_network:
+  network_deep_tech_doc_scope:
     driver: bridge
