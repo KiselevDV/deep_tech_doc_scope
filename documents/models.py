@@ -16,7 +16,10 @@ class Page(models.Model):
     is_scanned = models.BooleanField(default=False)
     raw_text = models.TextField(blank=True)       # текст, если он есть в PDF
     ocr_text = models.TextField(blank=True)       # текст, полученный из OCR
-    classification = models.CharField(max_length=100, blank=True)  # типа "certificate", "spec" и т.д.
+    classification = models.CharField(
+        max_length=100, blank=True, null=True,
+        help_text='Тип содержимого страницы: сертификат, титульный лист и т.п.'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     width = models.FloatField(null=True)
     height = models.FloatField(null=True)
@@ -32,3 +35,12 @@ class TextBlock(models.Model):
     x1 = models.FloatField()
     y1 = models.FloatField()
     text = models.TextField()
+
+
+class Material(models.Model):
+    page = models.ForeignKey(Page, related_name='materials', on_delete=models.CASCADE)
+    name = models.CharField(max_length=256)
+    characteristics = models.JSONField(default=dict)  # например, {"ГОСТ": "1234-56", "Марка": "12Х18Н10Т"}
+
+    def __str__(self):
+        return f"{self.name} ({self.page})"

@@ -1,23 +1,5 @@
-import fitz
+from documents.models import Document, Page, TextBlock
 
-from documents.models import Document, Page
-
-
-# def process_pdf(document: Document):
-#     doc_path = document.file.path
-#     pdf = fitz.open(doc_path)
-#
-#     for page_number in range(len(pdf)):
-#         page = pdf[page_number]
-#         raw_text = page.get_text().strip()
-#         is_scanned = len(raw_text) < 10  # эвристика: почти нет текста = скан
-#
-#         Page.objects.create(
-#             document=document,
-#             number=page_number + 1,
-#             raw_text=raw_text,
-#             is_scanned=is_scanned
-#         )
 
 def process_pdf(document: Document):
     import fitz
@@ -50,3 +32,15 @@ def process_pdf(document: Document):
                     y1=y1,
                     text=text.strip()
                 )
+
+
+def process_document_pages(document, process_func, save_func, description=""):
+    for page in document.pages.all():
+        text = page.raw_text or page.ocr_text
+        if not text:
+            continue
+        try:
+            result = process_func(text)
+            save_func(page, result)
+        except Exception as e:
+            print(f"[{description}] Error on page {page.id}: {e}")
