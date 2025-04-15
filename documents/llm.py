@@ -3,8 +3,7 @@ import json
 import logging
 import requests
 
-from documents.conf import (
-    LLM_CLASSIFY_URL, LLM_TOKEN, LLM_API_URL, LLM_API_KEY)
+from documents.conf import LLM_CLASSIFY_URL, LLM_TOKEN, LLM_API_URL, LLM_API_KEY
 
 
 def classify_text_with_llm(text: str) -> str:
@@ -28,14 +27,13 @@ def classify_text_with_llm(text: str) -> str:
         data = response.json()
         return data.get("choices", [{}])[0].get("text", "").strip().lower()
     except Exception as e:
-        logging.warning(f"Ошибка при вызове LLM: {e}")
-        return "Ошибка"
+        logging.warning(f'Ошибка при вызове LLM: {e}')
+        return 'Ошибка'
 
 
 def extract_materials_from_text(text: str) -> list[dict]:
     prompt = f'''
     Ты — инженер по качеству. Проанализируй следующий текст и извлеки список материалов с их характеристиками.
-    
     Формат ответа:
     [
       {{
@@ -49,15 +47,14 @@ def extract_materials_from_text(text: str) -> list[dict]:
       }},
       ...
     ]
-    
     Текст: {text[:4000]}  # Обрежем для безопасности'''
 
     # Пример вызова LLM (DeepSeek или любой другой через API)
-    response = call_deepseek_api(prompt)  # эту функцию ты реализуешь сам
+    response = call_deepseek_api(prompt)
     try:
         return json.loads(response)
     except json.JSONDecodeError:
-        print("⚠️ LLM вернул невалидный JSON:")
+        print('LLM вернул невалидный JSON:')
         print(response)
         return []
 
@@ -82,5 +79,5 @@ def call_deepseek_api(prompt: str) -> str:
         response.raise_for_status()
         return response.json()['choices'][0]['message']['content']
     except Exception as e:
-        print(f"Ошибка при обращении к LLM API: {e}")
-        return ""
+        print(f'Ошибка при обращении к LLM API: {e}')
+        return ''
